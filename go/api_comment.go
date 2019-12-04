@@ -16,17 +16,101 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/boltdb/bolt"
+	"github.com/dgrijalva/jwt-go"
+	"github.com/dgrijalva/jwt-go/request"
 )
 
 func CreateComment(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
+	db, err := bolt.Open("my.db", 0600, nil)
+	fatal(err)
+	defer db.Close()
+
+	articleId := strings.Split(r.URL.Path, "/")[4]
+	Id, err := strconv.Atoi(articleId)
+	if err != nil {
+		response := InlineResponse404{err.Error()}
+		JsonResponse(response, w, http.StatusBadRequest)
+		return
+	}
+	err = db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("Article"))
+		if b != nil {
+			v := b.Get(itob(Id))
+			if v == nil {
+				return errors.New("Article Not Exists")
+			} else {
+				return nil
+			}
+		}
+		return errors.New("Article Not Exists")
+	})
+
+	if err != nil {
+		response := InlineResponse404{err.Error()}
+		JsonResponse(response, w, http.StatusBadRequest)
+		return
+	}
+
+	comment := &Comment{
+		Date:      time.Now().Format("2019-11-02 13:21:05"),
+		Content:   "",
+		Author:    "",
+		ArticleId: int32(Id),
+	}
+	err = json.NewDecoder(r.Body).Decode(&comment)
+
+	if err != nil || comment.Content == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		if err != nil {
+			response := InlineResponse404{err.Error()}
+			JsonResponse(response, w, http.StatusBadRequest)
+		} else {
+			response := ErrorResponse{"There is no content in your article"}
+			JsonResponse(response, w, http.StatusBadRequest)
+		}
+		return
+	}
+
+	token, err := request.ParseFromRequest(r, request.AuthorizationHeaderExtractor,
+		func(token *jwt.Token) (interface{}, error) {
+			return []byte(comment.Author), nil
+		})
+
+	if err == nil {
+		if token.Valid {
+
+			err = db.Update(func(tx *bolt.Tx) error {
+				b, err := tx.CreateBucketIfNotExists([]byte("Comment"))
+				if err != nil {
+					return err
+				}
+				id, _ := b.NextSequence()
+				encoded, err := json.Marshal(comment)
+				return b.Put(itob(int(id)), encoded)
+			})
+			if err != nil {
+				response := InlineResponse404{err.Error()}
+				JsonResponse(response, w, http.StatusBadRequest)
+				return
+			}
+			JsonResponse(comment, w, http.StatusOK)
+		} else {
+			response := ErrorResponse{"Token is not valid"}
+			JsonResponse(response, w, http.StatusUnauthorized)
+		}
+	} else {
+		response := ErrorResponse{"Unauthorized access to this resource"}
+		JsonResponse(response, w, http.StatusUnauthorized)
+	}
 }
 
+/////////////////
+
 func GetCommentsOfArticle(w http.ResponseWriter, r *http.Request) {
-	db, err := bolt.Open("comments.db", 0600, nil)
+	db, err := bolt.Open("my.db", 0600, nil)
 	fatal(err)
 	defer db.Close()
 
@@ -40,7 +124,7 @@ func GetCommentsOfArticle(w http.ResponseWriter, r *http.Request) {
 	}
 	var article []byte
 	err = db.View(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte("article"))
+		b := tx.Bucket([]byte("Article"))
 		if b != nil {
 			v := b.Get(itob(Id))
 			if v == nil {
@@ -62,7 +146,7 @@ func GetCommentsOfArticle(w http.ResponseWriter, r *http.Request) {
 	var comments Comments
 	var comment Comment
 	err = db.View(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte("comment"))
+		b := tx.Bucket([]byte("Comment"))
 		if b != nil {
 			c := b.Cursor()
 

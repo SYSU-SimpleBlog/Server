@@ -36,7 +36,7 @@ func SignIn(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = db.View(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte("user"))
+		b := tx.Bucket([]byte("User"))
 		if b != nil {
 			v := b.Get([]byte(user.Username))
 			if ByteSliceEqual(v, []byte(user.Password)) {
