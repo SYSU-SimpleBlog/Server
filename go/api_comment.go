@@ -26,7 +26,7 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetCommentsOfArticle(w http.ResponseWriter, r *http.Request) {
-	db, err := bolt.Open("comments.db", 0600, nil)
+	db, err := bolt.Open("my.db", 0600, nil)
 	fatal(err)
 	defer db.Close()
 
