@@ -1,0 +1,319 @@
+---
+swagger: "2.0"
+info:
+  description: "A Simple Blog"
+  version: "1.0.0"
+  title: "simple blog"
+  termsOfService: "http://swagger.io/terms/"
+  contact:
+    email: "apiteam@swagger.io"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "blog.swagger.io"
+basePath: "/simpleblog"
+tags:
+- name: "article"
+  description: "Everything about users' articles"
+- name: "user"
+  description: "Operations about user"
+schemes:
+- "https"
+paths:
+  /user/articles:
+    get:
+      tags:
+      - "article"
+      summary: "Get articles"
+      description: "Get the title of the request page of articles"
+      operationId: "GetArticles"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "page"
+        in: "query"
+        description: "the request page"
+        required: true
+        type: "string"
+        x-exportParamName: "Page"
+      responses:
+        "200":
+          description: "Successful Operation"
+          schema:
+            $ref: "#/definitions/ArticlesResponse"
+        "404":
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/inline_response_404"
+  /user/article/{id}:
+    get:
+      tags:
+      - "article"
+      summary: "Get article by id"
+      description: "Get an article by it's id"
+      operationId: "GetArticleById"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The only Id of the article for the filter"
+        required: true
+        type: "integer"
+        x-exportParamName: "Id"
+      responses:
+        "200":
+          description: "Successful Operation"
+          schema:
+            $ref: "#/definitions/Article"
+        "400":
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/inline_response_404"
+        "404":
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/inline_response_404"
+    delete:
+      tags:
+      - "article"
+      summary: "Delete article by id"
+      description: "Delete an article by it's id"
+      operationId: "DeleteArticleById"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The only Id of the article for the filter"
+        required: true
+        type: "integer"
+        x-exportParamName: "Id"
+      responses:
+        "400":
+          description: "Invalid ID supplied"
+        "404":
+          description: "Article not found"
+  /user/article/{id}/comments:
+    get:
+      tags:
+      - "comment"
+      summary: "Get all comments of an article"
+      description: "Get all comments of an article"
+      operationId: "GetCommentsOfArticle"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The only id of the article to return"
+        required: true
+        type: "integer"
+        x-exportParamName: "Id"
+      responses:
+        "200":
+          description: "Successful Operation"
+          schema:
+            $ref: "#/definitions/Comments"
+        "400":
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/inline_response_404"
+        "404":
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/inline_response_404"
+    post:
+      tags:
+      - "comment"
+      summary: "create comment"
+      description: "user creates a comment for the article"
+      operationId: "CreateComment"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "integer"
+        x-exportParamName: "Id"
+      - in: "body"
+        name: "body"
+        required: true
+        schema:
+          $ref: "#/definitions/body"
+        x-exportParamName: "Body"
+      responses:
+        "200":
+          description: "Successful Operation"
+          schema:
+            $ref: "#/definitions/Comment"
+        "400":
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/inline_response_404"
+  /user/signin:
+    post:
+      tags:
+      - "user"
+      summary: "sign in"
+      description: "Check user with username and password"
+      operationId: "SignIn"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+        x-exportParamName: "Body"
+      responses:
+        "200":
+          description: "Successful Operation"
+          schema:
+            $ref: "#/definitions/inline_response_200"
+        "404":
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/inline_response_404"
+securityDefinitions:
+  petstore_auth:
+    type: "oauth2"
+    authorizationUrl: "http://petstore.swagger.io/oauth/dialog"
+    flow: "implicit"
+    scopes:
+      write:pets: "modify pets in your account"
+      read:pets: "read your pets"
+  api_key:
+    type: "apiKey"
+    name: "api_key"
+    in: "header"
+definitions:
+  User:
+    type: "object"
+    required:
+    - "password"
+    - "username"
+    properties:
+      username:
+        type: "string"
+      password:
+        type: "string"
+    example:
+      password: "password"
+      username: "username"
+  Tag:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+    example:
+      name: "name"
+  Article:
+    type: "object"
+    required:
+    - "content"
+    - "id"
+    - "name"
+    properties:
+      id:
+        type: "integer"
+      name:
+        type: "string"
+      tags:
+        type: "array"
+        items:
+          $ref: "#/definitions/Tag"
+      date:
+        type: "string"
+      content:
+        type: "string"
+    example:
+      date: "date"
+      author: "author"
+      name: "name"
+      id: 0
+      content: "content"
+      tags:
+      - name: "name"
+      - name: "name"
+  Comment:
+    type: "object"
+    required:
+    - "articleId"
+    - "author"
+    - "content"
+    - "date"
+    properties:
+      date:
+        type: "string"
+      content:
+        type: "string"
+      author:
+        type: "string"
+      articleId:
+        type: "integer"
+    example:
+      date: "date"
+      author: "author"
+      articleId: 0
+      content: "content"
+  Comments:
+    properties:
+      contents:
+        type: "array"
+        items:
+          $ref: "#/definitions/Comment"
+    example:
+      contents:
+      - date: "date"
+        author: "author"
+        articleId: 0
+        content: "content"
+      - date: "date"
+        author: "author"
+        articleId: 0
+        content: "content"
+  ArticleResponse:
+    properties:
+      id:
+        type: "integer"
+      name:
+        type: "string"
+    example:
+      name: "name"
+      id: 0
+  ArticlesResponse:
+    properties:
+      Articles:
+        type: "array"
+        items:
+          $ref: "#/definitions/ArticleResponse"
+    example:
+      Articles:
+      - name: "name"
+        id: 0
+      - name: "name"
+        id: 0
+  inline_response_404:
+    type: "object"
+    properties:
+      error:
+        type: "string"
+        example: ""
+  inline_response_200:
+    type: "object"
+    properties:
+      token:
+        type: "string"
+    example:
+      token: "token"
+  body:
+    type: "object"
+    properties:
+      content:
+        type: "string"
+      author:
+        type: "string"
+externalDocs:
+  description: "Find out more about Swagger"
+  url: "http://swagger.io"
