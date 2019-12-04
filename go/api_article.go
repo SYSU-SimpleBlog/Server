@@ -11,20 +11,159 @@
 package swagger
 
 import (
+	"encoding/binary"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"log"
 	"net/http"
+	"net/url"
+	"strconv"
+	"strings"
+
+	"github.com/boltdb/bolt"
 )
 
 func DeleteArticleById(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
+	//connect to database
+	db, err := bolt.Open("my.db", 0600, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	//  /user/article/{id}
+	articleId := strings.Split(r.URL.Path, "/")[3]
+
+	//	string to int
+	Id, err := strconv.Atoi(articleId)
+	if err != nil {
+		response := ErrorResponse{"Wrong ArticleId"}
+		JsonResponse(response, w, http.StatusBadRequest)
+		return
+	}
+
+	//delete the article by ID
+	err = db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("Article"))
+		if b != nil {
+			err := b.Delete(itob(Id))
+			if err != nil {
+				return errors.New("Delete article failed")
+			}
+		} else {
+			return errors.New("Article Not Exists")
+		}
+		return nil
+	})
+
+	if err != nil {
+		response := ErrorResponse{err.Error()}
+		JsonResponse(response, w, http.StatusNotFound)
+		return
+	}
+	JsonResponse("", w, http.StatusNotFound)
 }
 
 func GetArticleById(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
+	//connect to database
+	db, err := bolt.Open("my.db", 0600, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	//  /user/article/{id}
+	articleId := strings.Split(r.URL.Path, "/")[3]
+
+	//	string to int
+	Id, err := strconv.Atoi(articleId)
+	if err != nil {
+		reponse := ErrorResponse{"Wrong ArticleId"}
+		JsonResponse(reponse, w, http.StatusBadRequest)
+		return
+	}
+
+	//query the article by ID
+	var article Article
+	err = db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("Article"))
+		if b != nil {
+			v := b.Get(itob(Id))
+			if v == nil {
+				return errors.New("Article Not Exists")
+			} else {
+				_ = json.Unmarshal(v, &article)
+				return nil
+			}
+		} else {
+			return errors.New("Article Not Exists")
+		}
+	})
+
+	if err != nil {
+		response := ErrorResponse{err.Error()}
+		JsonResponse(response, w, http.StatusNotFound)
+		return
+	}
+
+	JsonResponse(article, w, http.StatusOK)
 }
 
+//  /user/articles
+//  http://localhost:8080/user/articles?page=1
 func GetArticles(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
+	db, err := bolt.Open("my.db", 0600, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	u, err := url.Parse(r.URL.String())
+	if err != nil {
+		log.Fatal(err)
+	}
+	m, _ := url.ParseQuery(u.RawQuery)
+	page := m["page"][0]
+	IdIndex, err := strconv.Atoi(page)
+
+	//display 10 articles per page
+	IdIndex = (IdIndex-1)*10 + 1
+	var articles ArticlesResponse
+	var article ArticleResponse
+	err = db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("Article"))
+		if b != nil {
+			c := b.Cursor()
+			k, v := c.Seek(itob(IdIndex))
+			if k == nil {
+				return errors.New("Page is out of index")
+			}
+			key := binary.BigEndian.Uint64(k)
+			fmt.Print(key)
+			if int(key) != IdIndex {
+				return errors.New("Page is out of index")
+			}
+			count := 0
+			for ; k != nil && count < 10; k, v = c.Next() {
+				err = json.Unmarshal(v, &article)
+				if err != nil {
+					return err
+				}
+				articles.Articles = append(articles.Articles, article)
+				count = count + 1
+			}
+			return nil
+		} else {
+			return errors.New("Article Not Exists")
+		}
+	})
+	if err != nil {
+		response := ErrorResponse{err.Error()}
+		JsonResponse(response, w, http.StatusNotFound)
+		return
+	}
+	json, err := json.Marshal(articles)
+	fmt.Println(string(json))
+	JsonResponse(articles, w, http.StatusOK)
 }
