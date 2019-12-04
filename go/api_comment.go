@@ -11,7 +11,13 @@
 package swagger
 
 import (
+	"encoding/json"
+	"errors"
 	"net/http"
+	"strconv"
+	"strings"
+
+	"github.com/boltdb/bolt"
 )
 
 func CreateComment(w http.ResponseWriter, r *http.Request) {
@@ -20,6 +26,67 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetCommentsOfArticle(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
+	db, err := bolt.Open("comments.db", 0600, nil)
+	fatal(err)
+	defer db.Close()
+
+	articleId := strings.Split(r.URL.Path, "/")[4]
+	temp, err := strconv.Atoi(articleId)
+	var Id int = int(temp)
+	if err != nil {
+		reponse := InlineResponse404{err.Error()}
+		JsonResponse(reponse, w, http.StatusNotFound)
+		return
+	}
+	var article []byte
+	err = db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("article"))
+		if b != nil {
+			v := b.Get(itob(Id))
+			if v == nil {
+				return errors.New("Article Not Exists")
+			} else {
+				article = v
+				return nil
+			}
+		} else {
+			return errors.New("Article Not Exists")
+		}
+	})
+
+	if err != nil {
+		reponse := InlineResponse404{err.Error()}
+		JsonResponse(reponse, w, http.StatusNotFound)
+		return
+	}
+	var comments Comments
+	var comment Comment
+	err = db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("comment"))
+		if b != nil {
+			c := b.Cursor()
+
+			for k, v := c.First(); k != nil; k, v = c.Next() {
+				err = json.Unmarshal(v, &comment)
+				if err != nil {
+					return err
+				}
+				if int(comment.ArticleId) == Id {
+					comments.Contents = append(comments.Contents, comment)
+				}
+			}
+
+			return nil
+		} else {
+			return errors.New("Comment Not Exists")
+		}
+	})
+
+	if err != nil {
+		reponse := InlineResponse404{err.Error()}
+		JsonResponse(reponse, w, http.StatusNotFound)
+		return
+	}
+
+	JsonResponse(comments, w, http.StatusOK)
 }
