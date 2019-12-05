@@ -11,10 +11,80 @@
 package swagger
 
 import (
+	"encoding/json"
+	"errors"
 	"net/http"
+	"time"
+
+	"github.com/boltdb/bolt"
+	"github.com/dgrijalva/jwt-go"
 )
 
 func SignIn(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
+	db, err := bolt.Open("my.db", 0600, nil)
+	fatal(err)
+	defer db.Close()
+
+	var user User
+
+	err = json.NewDecoder(r.Body).Decode(&user)
+
+	if err != nil {
+		response := InlineResponse404{err.Error()}
+		JsonResponse(response, w, http.StatusBadRequest)
+		return
+	}
+
+	err = db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("User"))
+		if b != nil {
+			v := b.Get([]byte(user.Username))
+			if ByteSliceEqual(v, []byte(user.Password)) {
+				return nil
+			} else {
+				return errors.New("Username and Password do not match")
+			}
+		} else {
+			return errors.New("Username and Password do not match")
+		}
+	})
+
+	if err != nil {
+		response := InlineResponse404{err.Error()}
+		JsonResponse(response, w, http.StatusNotFound)
+		return
+	}
+
+	token := jwt.New(jwt.SigningMethodHS256)
+	claims := make(jwt.MapClaims)
+	claims["exp"] = time.Now().Add(time.Hour * time.Duration(1)).Unix()
+	claims["iat"] = time.Now().Unix()
+	token.Claims = claims
+
+	if err != nil {
+		fatal(err)
+	}
+
+	tokenString, err := token.SignedString([]byte(user.Username))
+	if err != nil {
+		fatal(err)
+	}
+
+	response := Token{tokenString}
+	JsonResponse(response, w, http.StatusOK)
+}
+
+func ByteSliceEqual(a, b []byte) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	if (a == nil) != (b == nil) {
+		return false
+	}
+	for i, v := range a {
+		if v != b[i] {
+			return false
+		}
+	}
+	return true
 }

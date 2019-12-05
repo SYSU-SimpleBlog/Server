@@ -11,7 +11,6 @@
 package swagger
 
 import (
-	"encoding/binary"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -25,6 +24,7 @@ import (
 )
 
 func DeleteArticleById(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("call deletr")
 	//connect to database
 	db, err := bolt.Open("my.db", 0600, nil)
 	if err != nil {
@@ -33,10 +33,11 @@ func DeleteArticleById(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 
 	//  /user/article/{id}
-	articleId := strings.Split(r.URL.Path, "/")[3]
+	articleId := strings.Split(r.URL.Path, "/")[4]
 
 	//	string to int
 	Id, err := strconv.Atoi(articleId)
+	fmt.Println(Id)
 	if err != nil {
 		response := ErrorResponse{"Wrong ArticleId"}
 		JsonResponse(response, w, http.StatusBadRequest)
@@ -44,10 +45,12 @@ func DeleteArticleById(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//delete the article by ID
-	err = db.View(func(tx *bolt.Tx) error {
+	err = db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("Article"))
 		if b != nil {
-			err := b.Delete(itob(Id))
+			c := b.Cursor()
+			c.Seek(itob(Id))
+			err := c.Delete()
 			if err != nil {
 				return errors.New("Delete article failed")
 			}
@@ -74,10 +77,11 @@ func GetArticleById(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 
 	//  /user/article/{id}
-	articleId := strings.Split(r.URL.Path, "/")[3]
+	articleId := strings.Split(r.URL.Path, "/")[4]
 
 	//	string to int
 	Id, err := strconv.Atoi(articleId)
+	fmt.Println(Id)
 	if err != nil {
 		reponse := ErrorResponse{"Wrong ArticleId"}
 		JsonResponse(reponse, w, http.StatusBadRequest)
@@ -127,22 +131,37 @@ func GetArticles(w http.ResponseWriter, r *http.Request) {
 	page := m["page"][0]
 	IdIndex, err := strconv.Atoi(page)
 
+	pageCount := 0
+	db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("Article")) //konglong 这个 桶 必须存在！！！
+		b.ForEach(func(k, v []byte) error {
+			pageCount = pageCount + 1
+			return nil
+		})
+		return nil
+	})
+
+	fmt.Println(pageCount)
+
 	//display 10 articles per page
 	IdIndex = (IdIndex-1)*10 + 1
 	var articles ArticlesResponse
 	var article ArticleResponse
 	err = db.View(func(tx *bolt.Tx) error {
+		articles.PageCount = pageCount
 		b := tx.Bucket([]byte("Article"))
+		var k, v []byte
 		if b != nil {
 			c := b.Cursor()
-			k, v := c.Seek(itob(IdIndex))
-			if k == nil {
-				return errors.New("Page is out of index")
-			}
-			key := binary.BigEndian.Uint64(k)
-			fmt.Print(key)
-			if int(key) != IdIndex {
-				return errors.New("Page is out of index")
+			k, v = c.First()
+			err = json.Unmarshal(v, &article)
+			for i := 1; i < IdIndex; i++ {
+				k, v = c.Next()
+				err = json.Unmarshal(v, &article)
+				fmt.Println(article.Id)
+				if k == nil {
+					return errors.New("Page is out of index")
+				}
 			}
 			count := 0
 			for ; k != nil && count < 10; k, v = c.Next() {
