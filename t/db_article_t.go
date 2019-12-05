@@ -26,7 +26,7 @@ import (
 	//    sw "github.com/myname/myrepo/go"
 	//
 
-	sw "Server/go"
+	sw "github.com/homework/Server/go"
 
 	"github.com/boltdb/bolt"
 )

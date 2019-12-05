@@ -33,14 +33,12 @@ func NewRouter() *mux.Router {
 		var handler http.Handler
 		handler = route.HandlerFunc
 		handler = Logger(handler, route.Name)
-
 		router.
 			Methods(route.Method).
 			Path(route.Pattern).
 			Name(route.Name).
 			Handler(handler)
 	}
-
 	return router
 }
 
@@ -58,8 +56,8 @@ var routes = Routes{
 
 	Route{
 		"DeleteArticleById",
-		strings.ToUpper("Delete"),
-		"/simpleblog/user/article/{id}",
+		strings.ToUpper("Get"),
+		"/simpleblog/user/deleteArticle/{id}",
 		DeleteArticleById,
 	},
 
