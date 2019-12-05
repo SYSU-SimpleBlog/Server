@@ -44,10 +44,12 @@ func DeleteArticleById(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//delete the article by ID
-	err = db.View(func(tx *bolt.Tx) error {
+	err = db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("Article"))
 		if b != nil {
-			err := b.Delete(itob(Id))
+			c := b.Cursor()
+			c.Seek(itob(Id))
+			err := c.Delete()
 			if err != nil {
 				return errors.New("Delete article failed")
 			}
