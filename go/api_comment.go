@@ -12,11 +12,13 @@ package swagger
 
 import (
 	"encoding/json"
+	"encoding/binary"
 	"errors"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
+	"log"
 
 	"github.com/boltdb/bolt"
 	"github.com/dgrijalva/jwt-go"
@@ -25,16 +27,19 @@ import (
 
 func CreateComment(w http.ResponseWriter, r *http.Request) {
 	db, err := bolt.Open("my.db", 0600, nil)
-	fatal(err)
+	log.Fatal(err)
 	defer db.Close()
 
 	articleId := strings.Split(r.URL.Path, "/")[4]
+
 	Id, err := strconv.Atoi(articleId)
 	if err != nil {
 		response := InlineResponse404{err.Error()}
 		JsonResponse(response, w, http.StatusBadRequest)
 		return
 	}
+
+	var article Article
 	err = db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("Article"))
 		if b != nil {
@@ -42,6 +47,7 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 			if v == nil {
 				return errors.New("Article Not Exists")
 			} else {
+				_=json.Unmarshal(v,&article)
 				return nil
 			}
 		}
@@ -74,11 +80,12 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	
 	token, err := request.ParseFromRequest(r, request.AuthorizationHeaderExtractor,
 		func(token *jwt.Token) (interface{}, error) {
 			return []byte(comment.Author), nil
 		})
-
+	
 	if err == nil {
 		if token.Valid {
 
@@ -105,6 +112,7 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 		response := ErrorResponse{"Unauthorized access to this resource"}
 		JsonResponse(response, w, http.StatusUnauthorized)
 	}
+
 }
 
 /////////////////
@@ -173,4 +181,42 @@ func GetCommentsOfArticle(w http.ResponseWriter, r *http.Request) {
 	}
 
 	JsonResponse(comments, w, http.StatusOK)
+}
+func fatal(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+type Response struct {
+	Data string `json:"data"`
+}
+
+type Token struct {
+	Token string `json:"token"`
+}
+
+type ErrorResponse struct {
+	Error string `json:"error"`
+}
+
+func itob(v int) []byte {
+	b := make([]byte, 8)
+	binary.BigEndian.PutUint64(b, uint64(v))
+	return b
+}
+
+func JsonResponse(response interface{}, w http.ResponseWriter, code int) {
+	json, err := json.Marshal(response)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+
+	w.Header().Set("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "X-Requested-With,Content-Type,Authorization")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+	w.Write(json)
 }
