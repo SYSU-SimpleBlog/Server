@@ -74,7 +74,8 @@ paths:
           description: "Not Found"
           schema:
             $ref: "#/definitions/inline_response_404"
-    delete:
+  /user/deleteArticle/{id}:
+    get:
       tags:
       - "article"
       summary: "Delete article by id"
@@ -90,8 +91,8 @@ paths:
         type: "integer"
         x-exportParamName: "Id"
       responses:
-        "400":
-          description: "Invalid ID supplied"
+        "200":
+          description: "Article is deleted"
         "404":
           description: "Article not found"
   /user/article/{id}/comments:
