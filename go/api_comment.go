@@ -12,7 +12,6 @@ package swagger
 
 import (
 	"encoding/json"
-	"encoding/binary"
 	"errors"
 	"net/http"
 	"strconv"
