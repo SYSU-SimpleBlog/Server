@@ -115,7 +115,6 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 
 }
 
-/////////////////
 
 func GetCommentsOfArticle(w http.ResponseWriter, r *http.Request) {
 	db, err := bolt.Open("my.db", 0600, nil)
@@ -181,42 +180,4 @@ func GetCommentsOfArticle(w http.ResponseWriter, r *http.Request) {
 	}
 
 	JsonResponse(comments, w, http.StatusOK)
-}
-func fatal(err error) {
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
-type Response struct {
-	Data string `json:"data"`
-}
-
-type Token struct {
-	Token string `json:"token"`
-}
-
-type ErrorResponse struct {
-	Error string `json:"error"`
-}
-
-func itob(v int) []byte {
-	b := make([]byte, 8)
-	binary.BigEndian.PutUint64(b, uint64(v))
-	return b
-}
-
-func JsonResponse(response interface{}, w http.ResponseWriter, code int) {
-	json, err := json.Marshal(response)
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
-
-	w.Header().Set("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS")
-	w.Header().Set("Access-Control-Allow-Headers", "X-Requested-With,Content-Type,Authorization")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(code)
-	w.Write(json)
 }
