@@ -93,7 +93,7 @@ var routes = Routes{
 
 	Route{
 		"SignIn",
-		strings.ToUpper("Post"),
+		strings.ToUpper("Get"), //change 1
 		"/simpleblog/user/signin",
 		SignIn,
 	},
