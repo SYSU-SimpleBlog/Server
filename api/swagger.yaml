@@ -160,13 +160,6 @@ paths:
       operationId: "SignIn"
       produces:
       - "application/json"
-      parameters:
-      - in: "body"
-        name: "body"
-        required: true
-        schema:
-          $ref: "#/definitions/User"
-        x-exportParamName: "Body"
       responses:
         "200":
           description: "Successful Operation"
