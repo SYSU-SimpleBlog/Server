@@ -151,7 +151,7 @@ paths:
           schema:
             $ref: "#/definitions/inline_response_404"
   /user/signin:
-    post:
+    get:
       tags:
       - "user"
       summary: "sign in"
