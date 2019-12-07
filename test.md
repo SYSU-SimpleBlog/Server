@@ -32,7 +32,7 @@ curl -H "Authorization:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NzU2OTE4
 * getComments
 
 ```
-http://localhost:8080/simpleblog/user/article/2/comments
+http://localhost:8080/simpleblog/user/article/2/comments?page=1
 ```
 
 
