@@ -1,7 +1,3 @@
-[![img](https://upload.jianshu.io/users/upload_avatars/8654141/ac6326e1-4605-4e84-9893-ccc2cf78de95.JPG?imageMogr2/auto-orient/strip|imageView2/1/w/96/h/96/format/webp)](https://www.jianshu.com/u/033641990ba6)
-
-[iOS开发_小迷糊](https://www.jianshu.com/u/033641990ba6)关注
-
 苹果在 2014 年 WWDC 发布了全新 Swift 编程语言，Swift 是苹果平台未来的编程语言。自那以后，很多第三方开发者开始使用 Swift 编写程序，不过苹果 iOS 和 macOS 系统，以及各种系统应用还是采用 Objective-C 编写。
 
 这种情况存在很多原因，首先，苹果目前大量的 Objective-C 代码工作的很完美，没有必要为了重写而重写，没有问题就不要创造新的问题。其次，直到 Swift 5.0，ABI 才稳定，Swift 5.1，模块稳定，对于在系统级别大规模部署很重要。
