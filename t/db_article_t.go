@@ -27,7 +27,7 @@ import (
 	//    sw "github.com/myname/myrepo/go"
 	//
 
-	sw "github.com/homework/Server/go"
+	sw "github.com/SYSU-SimpleBlog/Server/go"
 
 	"github.com/boltdb/bolt"
 )
@@ -85,7 +85,8 @@ func CreateTable() {
 
 				//fmt.Println("文本内容为:", string(content))
 
-				article = sw.Article{int32(i), articleName, tags, "2019", string(content)}
+				title := articleName[:len(articleName)-3]
+				article = sw.Article{int32(i), title, tags, "2019", string(content)}
 				v, err := json.Marshal(article)
 				//insert rows
 				err = b.Put(itob(i), v)

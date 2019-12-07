@@ -21,8 +21,8 @@ import (
 	//
 	//    sw "github.com/myname/myrepo/go"
 	//
-	sw "github.com/homework/Server/go"
-	t "github.com/homework/Server/t"
+	sw "github.com/SYSU-SimpleBlog/Server/go"
+	t "github.com/SYSU-SimpleBlog/Server/t"
 )
 
 func main() {
