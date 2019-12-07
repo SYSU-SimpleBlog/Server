@@ -26,7 +26,7 @@ import (
 	//    sw "github.com/myname/myrepo/go"
 	//
 
-	sw "Server/go"
+	sw "../go"
 
 	"github.com/boltdb/bolt"
 )
@@ -60,11 +60,11 @@ func CreateTable() {
 						log.Fatal(err)
 					}
 				}
-
 			} else {
 				log.Fatal(err)
 			}
 		}
+
 		return nil
 	})
 
@@ -184,11 +184,13 @@ func DeleteArticleById(id int) {
 	fmt.Println("Successfully Delete article ", id)
 }
 
-func TestArticle() {
+func BuildDB() {
 	CreateTable()
 	GetArticleById(1)
 	GetArticleById(5)
-	GetArticles(1)
+	GetArticles(1)/*
 	DeleteArticleById(5)
 	GetArticleById(5)
+*/
+	CreateUser()
 }

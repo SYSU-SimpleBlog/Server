@@ -17,6 +17,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"log"
 
 	"github.com/boltdb/bolt"
 	"github.com/dgrijalva/jwt-go"
@@ -25,16 +26,19 @@ import (
 
 func CreateComment(w http.ResponseWriter, r *http.Request) {
 	db, err := bolt.Open("my.db", 0600, nil)
-	fatal(err)
+	log.Fatal(err)
 	defer db.Close()
 
 	articleId := strings.Split(r.URL.Path, "/")[4]
+
 	Id, err := strconv.Atoi(articleId)
 	if err != nil {
 		response := InlineResponse404{err.Error()}
 		JsonResponse(response, w, http.StatusBadRequest)
 		return
 	}
+
+	var article Article
 	err = db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("Article"))
 		if b != nil {
@@ -42,6 +46,7 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 			if v == nil {
 				return errors.New("Article Not Exists")
 			} else {
+				_=json.Unmarshal(v,&article)
 				return nil
 			}
 		}
@@ -74,11 +79,12 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	
 	token, err := request.ParseFromRequest(r, request.AuthorizationHeaderExtractor,
 		func(token *jwt.Token) (interface{}, error) {
 			return []byte(comment.Author), nil
 		})
-
+	
 	if err == nil {
 		if token.Valid {
 
@@ -105,9 +111,9 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 		response := ErrorResponse{"Unauthorized access to this resource"}
 		JsonResponse(response, w, http.StatusUnauthorized)
 	}
+
 }
 
-/////////////////
 
 func GetCommentsOfArticle(w http.ResponseWriter, r *http.Request) {
 	db, err := bolt.Open("my.db", 0600, nil)

@@ -11,6 +11,7 @@
 package swagger
 
 type ArticlesResponse struct {
+	PageCount int
 
 	Articles []ArticleResponse `json:"Articles,omitempty"`
 }

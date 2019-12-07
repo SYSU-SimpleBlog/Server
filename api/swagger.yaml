@@ -74,7 +74,8 @@ paths:
           description: "Not Found"
           schema:
             $ref: "#/definitions/inline_response_404"
-    delete:
+  /user/deleteArticle/{id}:
+    get:
       tags:
       - "article"
       summary: "Delete article by id"
@@ -90,8 +91,8 @@ paths:
         type: "integer"
         x-exportParamName: "Id"
       responses:
-        "400":
-          description: "Invalid ID supplied"
+        "200":
+          description: "Article is deleted"
         "404":
           description: "Article not found"
   /user/article/{id}/comments:
@@ -151,7 +152,7 @@ paths:
           schema:
             $ref: "#/definitions/inline_response_404"
   /user/signin:
-    post:
+    get:
       tags:
       - "user"
       summary: "sign in"
@@ -165,7 +166,7 @@ paths:
         required: true
         schema:
           $ref: "#/definitions/User"
-        x-exportParamName: "Body"
+        x-exportParamName: "StructString"
       responses:
         "200":
           description: "Successful Operation"
