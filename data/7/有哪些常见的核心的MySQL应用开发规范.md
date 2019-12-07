@@ -1,5 +1,3 @@
-# 有哪些常见的核心的MySQL应用开发规范?
-
 [![img](https://upload.jianshu.io/users/upload_avatars/20009699/c5a3c7f3-0b32-4e56-a306-bae152eb4dd5.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/96/h/96/format/webp)](https://www.jianshu.com/u/d77e633dedf0)
 
 [小知_知数堂](https://www.jianshu.com/u/d77e633dedf0)关注

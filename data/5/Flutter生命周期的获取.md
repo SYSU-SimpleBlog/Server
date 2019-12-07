@@ -1,5 +1,3 @@
-# Flutter生命周期的获取
-
 [![img](https://upload.jianshu.io/users/upload_avatars/18813666/f99b1460-65f2-4359-8df4-1ecab2f3f743.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/96/h/96/format/webp)](https://www.jianshu.com/u/c6fe19ec433f)
 
 [Android架构师丨小熊](https://www.jianshu.com/u/c6fe19ec433f)关注

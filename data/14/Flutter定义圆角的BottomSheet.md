@@ -1,5 +1,3 @@
-# Flutter定义圆角的BottomSheet
-
 [![img](https://upload.jianshu.io/users/upload_avatars/14802001/af144813-7861-4c84-b743-d901532c51de.jpeg?imageMogr2/auto-orient/strip|imageView2/1/w/96/h/96/format/webp)](https://www.jianshu.com/u/f516cfa3c49c)
 
 [李良逸](https://www.jianshu.com/u/f516cfa3c49c)关注

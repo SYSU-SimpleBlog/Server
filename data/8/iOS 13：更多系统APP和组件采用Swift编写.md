@@ -1,5 +1,3 @@
-# iOS 13：更多系统APP和组件采用Swift编写
-
 [![img](https://upload.jianshu.io/users/upload_avatars/8654141/ac6326e1-4605-4e84-9893-ccc2cf78de95.JPG?imageMogr2/auto-orient/strip|imageView2/1/w/96/h/96/format/webp)](https://www.jianshu.com/u/033641990ba6)
 
 [iOS开发_小迷糊](https://www.jianshu.com/u/033641990ba6)关注

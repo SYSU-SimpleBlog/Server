@@ -1,5 +1,3 @@
-# 如何优雅的解决群友的Python问题？
-
 [![img](https://upload.jianshu.io/users/upload_avatars/3629157/51226190-fced-4a0e-8246-65a70e65fcf0.png?imageMogr2/auto-orient/strip|imageView2/1/w/96/h/96/format/webp)](https://www.jianshu.com/u/9104ebf5e177)
 
 [罗罗攀](https://www.jianshu.com/u/9104ebf5e177)关注

@@ -1,5 +1,3 @@
-# Ubuntu 16.04安装ROS Kinetic详细教程 | Tutorial to Install and Configure ROS Kinetic on Ubuntu 16.04
-
 [![img](https://upload.jianshu.io/users/upload_avatars/20059030/60ad3b7b-5caf-4ff7-890c-6983c6385619.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/96/h/96/format/webp)](https://www.jianshu.com/u/12461cd06bc9)
 
 [kezunlin](https://www.jianshu.com/u/12461cd06bc9)关注

@@ -1,5 +1,3 @@
-# ViewPager-onPageScrolled不困惑
-
 [![img](https://upload.jianshu.io/users/upload_avatars/2007513/e330bda6-9c99-4849-804f-bd7cd10aec77.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/96/h/96/format/webp)](https://www.jianshu.com/u/09a3f413b0da)
 
 [ERDF](https://www.jianshu.com/u/09a3f413b0da)关注

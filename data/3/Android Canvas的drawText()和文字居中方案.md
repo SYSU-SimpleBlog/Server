@@ -1,5 +1,3 @@
-# Android Canvas的drawText()和文字居中方案
-
 [![img](https://upload.jianshu.io/users/upload_avatars/5734256/2c5ca10c-8991-4770-bcef-4f8f0217b13b.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/96/h/96/format/webp)](https://www.jianshu.com/u/c1664cb26499)
 
 [biloba](https://www.jianshu.com/u/c1664cb26499)关注
