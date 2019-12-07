@@ -1,7 +1,3 @@
-[![img](https://upload.jianshu.io/users/upload_avatars/15217452/2f19b0df-fc3c-47d1-80eb-12fa9672b64f.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/96/h/96/format/webp)](https://www.jianshu.com/u/d84db63a9592)
-
-[Android高级开发](https://www.jianshu.com/u/d84db63a9592)关注
-
 #### 背景
 
 按钮应该是我们的App里面最普遍的组件之一了，特别常用。
