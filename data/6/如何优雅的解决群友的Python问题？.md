@@ -1,10 +1,3 @@
-[![img](https://upload.jianshu.io/users/upload_avatars/3629157/51226190-fced-4a0e-8246-65a70e65fcf0.png?imageMogr2/auto-orient/strip|imageView2/1/w/96/h/96/format/webp)](https://www.jianshu.com/u/9104ebf5e177)
-
-[罗罗攀](https://www.jianshu.com/u/9104ebf5e177)关注
-
-
-![img](https://upload-images.jianshu.io/upload_images/3629157-0ca8e5025c28a4b4.jpg?imageMogr2/auto-orient/strip|imageView2/2/w/1200/format/webp)
-
 ##### 01 问题描述
 
 这个问题来源于自己Python交流群中的一个问题，如下图所示，需要计算每列中各值的出现次数，然后组成一个新的表。
