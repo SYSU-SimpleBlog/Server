@@ -2,8 +2,6 @@
 
 [kezunlin](https://www.jianshu.com/u/12461cd06bc9)关注
 
-0.0972019.11.20 10:22:24字数 120阅读 30
-
 **本文首发于个人博客https://kezunlin.me/post/bcdfb73c/，欢迎阅读最新内容！**
 
 tensorrt fp32 fp16 tutorial with caffe pytorch minist model
@@ -464,13 +462,6 @@ Output:
 - Post author: [kezunlin](https://links.jianshu.com/go?to=https%3A%2F%2Fkezunlin.me)
 - Post link: [https://kezunlin.me/post/bcdfb73c/](https://links.jianshu.com/go?to=https%3A%2F%2Fkezunlin.me%2Fpost%2Fbcdfb73c%2F)
 - Copyright Notice: All articles in this blog are licensed under CC BY-NC-SA 3.0 unless stating additionally.
-
-
-
-
-
-1人点赞
-
 
 
 [kezunlin.me](https://www.jianshu.com/nb/40683949)

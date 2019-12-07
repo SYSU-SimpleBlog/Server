@@ -2,8 +2,6 @@
 
 [Android高级开发](https://www.jianshu.com/u/d84db63a9592)关注
 
-142019.08.15 16:54:23字数 1,440阅读 2,565
-
 #### 背景
 
 按钮应该是我们的App里面最普遍的组件之一了，特别常用。
@@ -545,5 +543,3 @@ image.png
 
 
 ![img](https://upload-images.jianshu.io/upload_images/15217452-3e4ac16c885c487a.jpg?imageMogr2/auto-orient/strip|imageView2/2/w/720/format/webp)
-
-image

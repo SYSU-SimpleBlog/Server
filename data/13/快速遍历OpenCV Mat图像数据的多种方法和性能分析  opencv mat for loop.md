@@ -2,7 +2,6 @@
 
 [kezunlin](https://www.jianshu.com/u/12461cd06bc9)关注
 
-0.3452019.11.19 08:48:23字数 343阅读 8
 
 **本文首发于个人博客https://kezunlin.me/post/61d55ab4/，欢迎阅读!**
 
@@ -600,18 +599,6 @@ print(image.shape)
 - Post link: [https://kezunlin.me/post/61d55ab4/](https://links.jianshu.com/go?to=https%3A%2F%2Fkezunlin.me%2Fpost%2F61d55ab4%2F)
 - Copyright Notice: All articles in this blog are licensed under CC BY-NC-SA 3.0 unless stating additionally.
 
-
-
-
-
-2人点赞
-
-
-
 [kezunlin.me](https://www.jianshu.com/nb/40683949)
 
 
-
-
-
-"❤️随心❤️"

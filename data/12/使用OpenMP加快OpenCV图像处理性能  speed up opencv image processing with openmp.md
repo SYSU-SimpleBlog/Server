@@ -2,8 +2,6 @@
 
 [kezunlin](https://www.jianshu.com/u/12461cd06bc9)关注
 
-0.1112019.11.19 08:49:00字数 2,248阅读 10
-
 **本文首发于个人博客https://kezunlin.me/post/7a6ba82e/，欢迎阅读!**
 
 speed up opencv image processing with openmp
@@ -1322,17 +1320,5 @@ void opencv_vector()
 
 
 
-
-1人点赞
-
-
-
 [kezunlin.me](https://www.jianshu.com/nb/40683949)
 
-
-
-
-
-"❤️随心❤️"
-
-赞赏支持

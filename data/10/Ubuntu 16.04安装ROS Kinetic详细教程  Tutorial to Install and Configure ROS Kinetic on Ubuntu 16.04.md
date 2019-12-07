@@ -2,8 +2,6 @@
 
 [kezunlin](https://www.jianshu.com/u/12461cd06bc9)关注
 
-0.1442019.11.11 14:28:49字数 267阅读 9
-
 **本文首发于个人博客https://kezunlin.me/post/e2780b93/，欢迎阅读!**
 
 Tutorial to Install and Configure ROS Kinetic on Ubuntu 16.04.

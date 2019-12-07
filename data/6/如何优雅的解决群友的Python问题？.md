@@ -2,9 +2,6 @@
 
 [罗罗攀](https://www.jianshu.com/u/9104ebf5e177)关注
 
-0.8632019.11.29 10:33:23字数 229阅读 62
-
-
 
 ![img](https://upload-images.jianshu.io/upload_images/3629157-0ca8e5025c28a4b4.jpg?imageMogr2/auto-orient/strip|imageView2/2/w/1200/format/webp)
 

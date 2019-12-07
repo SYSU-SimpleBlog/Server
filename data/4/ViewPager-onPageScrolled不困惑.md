@@ -2,7 +2,6 @@
 
 [ERDF](https://www.jianshu.com/u/09a3f413b0da)关注
 
-12017.04.19 22:29:00字数 335阅读 4,078
 
 > 本文将简单了解下ViewPager的onPageScrolled方法
 

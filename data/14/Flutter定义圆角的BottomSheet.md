@@ -2,8 +2,6 @@
 
 [李良逸](https://www.jianshu.com/u/f516cfa3c49c)关注
 
-2019.11.29 14:29:19字数 221阅读 23
-
 ## 显示 BottomSheet
 
 我们在一些日常开发的场景中，可能需要使用到BottomSheet来显示菜单，就像这样。
