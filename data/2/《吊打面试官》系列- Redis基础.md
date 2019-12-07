@@ -1,7 +1,3 @@
-[![img](https://upload.jianshu.io/users/upload_avatars/10550320/12e4e354-33be-46c5-b077-4eee6694288b.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/96/h/96/format/webp)](https://www.jianshu.com/u/e7c221a5d1d9)
-
-[敖丶丙](https://www.jianshu.com/u/e7c221a5d1d9)关注
-
 > 你知道的越多，你不知道的越多
 
 > 点赞再看，养成习惯
