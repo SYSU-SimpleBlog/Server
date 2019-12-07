@@ -1,7 +1,3 @@
-[![img](https://upload.jianshu.io/users/upload_avatars/18813666/f99b1460-65f2-4359-8df4-1ecab2f3f743.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/96/h/96/format/webp)](https://www.jianshu.com/u/c6fe19ec433f)
-
-[Android架构师丨小熊](https://www.jianshu.com/u/c6fe19ec433f)关注
-
 在Android开发中，系统对Activity、Fragment的生命周期有着非常明显且较于区分的定义，但是在flutter中，由于flutter的生命周期依附在activity或fragment，它的生命周期就不同以往了，下面就展示以下flutter生命周期的理解。
 
 ## flutter 生命周期相关函数的调用过程
