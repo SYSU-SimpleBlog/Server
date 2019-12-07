@@ -778,23 +778,4 @@ status = deferredList.flush(*this, dirty) | status;   //对deferredList中的绘
 
 > 第2步能够完全将Main Thread维护的Display List同步到Render Thread维护的Display List去很关键，它使得Main Thread和Render Thread可以并行执行，这意味着Render Thread在渲染应用程序窗口当前帧的Display List的同时，Main Thread可以去准备应用程序窗口下一帧的Display List，这样就使得应用程序窗口的UI更流畅。
 
-注意最后一段，在 Android 4.x 时代，没有RenderThread的时代，只有 Main Thread ，也就是说 必须要等到 Draw 完成后，才会去准备下一帧的数据，如下图：
-
-
-
-![img](https:////upload-images.jianshu.io/upload_images/20166-abc4d8b042be2787.png?imageMogr2/auto-orient/strip|imageView2/2/w/192/format/webp)
-
-Paste_Image.png
-
-Android5.0 之后，如老罗所说，有两种情况，
-
-![img](https:////upload-images.jianshu.io/upload_images/20166-96ced1dd07d5e833.png?imageMogr2/auto-orient/strip|imageView2/2/w/974/format/webp)
-
-Main Thread 和 Render Thread
-
-![img](https:////upload-images.jianshu.io/upload_images/20166-6b2b295b9c851f34.png?imageMogr2/auto-orient/strip|imageView2/2/w/987/format/webp)
-
-Render Thread 提前唤醒了 Main Thread
-
-可以看到第二张图中，Render Thread 并没有绘制完成，但是由于其提前唤醒了 Main Thread ，所以 Main Thread 在下一个Vsync信号到来的时候，响应了Vsync事件，开始准备下一帧。
- 此时虽然由于第一帧绘制时间过长，导致掉了一帧，但是第二帧没有收到任何影响。
+注意最后一段，在 Android 4.x 时代，没有RenderThread的时代，只有 Main Thread ，也就是说 必须要等到 Draw 完成后，才会去准备下一帧的数据。
