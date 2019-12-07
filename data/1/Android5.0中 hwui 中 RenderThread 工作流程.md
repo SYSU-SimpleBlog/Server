@@ -3,6 +3,7 @@
 本篇文章是自己的一个学习笔记，记录了 Android 5.0 中 hwui 中的 RenderThread 的简单工作流程。由于是学习笔记，所以其中一些细节不会太详细，我只是将大概的流程走一遍，将其工作流标注出来，下次遇到问题的时候就可以知道去哪里查。
 
 下图是我用 Systrace 抓取的一个应用启动的时候 RenderThread 的第一次 Draw 的 Trace 图，从这里面的顺序来看 RenderThread 的流程。熟悉应用启动流程的话应该知道，只有当第一次 DrawFrame 完成之后，整个应用的界面才会显示在手机上，在这之前，用户看到的是应用的 StartingWindow 的界面。
+![img](https://upload-images.jianshu.io/upload_images/20166-9a9a23855a87489c.png?imageMogr2/auto-orient/strip|imageView2/2/w/638/format/webp)
 
 RenderThread Draw first frame
 
@@ -10,7 +11,6 @@ RenderThread Draw first frame
 
 应用程序的每一帧是从接收到 VSYNC 信号开始进行计算和绘制的,这要从 Choreographer 这个类说起了，不过由于篇幅原因，我们直接看一帧的绘制调用关系链即可：
 ![img](https://upload-images.jianshu.io/upload_images/20166-3a6c09c1b5a07723.png?imageMogr2/auto-orient/strip|imageView2/2/w/937/format/webp)
-![img](https:////upload-images.jianshu.io/upload_images/20166-3a6c09c1b5a07723.png?imageMogr2/auto-orient/strip|imageView2/2/w/937/format/webp)
 
 绘制关系链
 
