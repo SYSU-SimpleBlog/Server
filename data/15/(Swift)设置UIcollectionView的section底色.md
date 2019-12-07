@@ -1,7 +1,3 @@
-[![img](https://cdn2.jianshu.io/assets/default_avatar/2-9636b13945b9ccf345bc98d0d81074eb.jpg)](https://www.jianshu.com/u/1f837584607b)
-
-[kingjiajie](https://www.jianshu.com/u/1f837584607b)关注
-
 # 前言
 
 具体代码demo如下：
