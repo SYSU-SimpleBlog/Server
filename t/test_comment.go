@@ -11,12 +11,16 @@
 package t
 
 import (
+	"bufio"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"io/ioutil"
 	"log"
+	"os"
 	"strconv"
-	"time"
+	"strings"
 
 	// WARNING!
 	// Change this to a fully-qualified import path
@@ -59,18 +63,49 @@ func CreateComment() {
 					return err
 				}
 				fmt.Println(article.Id)
-				for i := 1; i < 5; i++ {
-					timeStr := time.Now().Format("2006-01-02 15:04:05")
-					comment = sw.Comment{timeStr, "comment" + strconv.Itoa(i), "user" + strconv.Itoa(i), article.Id}
+				var id int
+				id = int(article.Id)
+				filePath := "./data/" + strconv.Itoa(id) + "/comments"
+				files, err := ioutil.ReadDir(filePath)
+				if err != nil {
+					log.Fatal(err)
+				}
+
+				for i := 1; i <= len(files); i++ {
+					file, err := os.OpenFile(filePath+"/"+files[i-1].Name(), os.O_RDWR, 0666)
+					buf := bufio.NewReader(file)
+					user, err := buf.ReadString('\n')
+					user = strings.TrimSpace(user)
+					fmt.Println(user)
+
+					time, err := buf.ReadString('\n')
+					time = strings.TrimSpace(time)
+					fmt.Println(time)
+
+					var content string
+					for {
+						line, err := buf.ReadString('\n')
+						line = strings.TrimSpace(line)
+						content = content + line
+						if err != nil {
+							if err == io.EOF {
+								fmt.Println("File read ok!")
+								break
+							} else {
+								fmt.Println("Read file error!", err)
+							}
+						}
+					}
+
+					//timeStr := time.Now().Format("2006-01-02 15:04:05")
+					comment = sw.Comment{time, content, user, article.Id}
 					fmt.Println(comment)
 					vc, err := json.Marshal(comment)
 					err = b.Put([]byte(strconv.Itoa(int(article.Id))+"_"+strconv.Itoa(i)), []byte(vc))
 					if err != nil {
 						log.Fatal(err)
 					}
-					time.Sleep(time.Second * 1)
 				}
-				fmt.Println()
 			}
 		} else {
 			return errors.New("Table Comment doesn't exist")
@@ -83,55 +118,6 @@ func CreateComment() {
 	}
 }
 
-// @Id: Id of Article
-func GetComments(Id int) {
-	db, err := bolt.Open("my.db", 0600, nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer db.Close()
-
-	var comment sw.Comment
-	var comments sw.Comments
-	err = db.View(func(tx *bolt.Tx) error {
-		a := tx.Bucket([]byte("Article"))
-		c := a.Cursor()
-		k, v := c.Seek(itob(Id))
-		if k == nil {
-			return errors.New("This Article doesn't exist")
-		}
-		b := tx.Bucket([]byte("Comment"))
-		d := b.Cursor()
-
-		if d != nil {
-			for k, v = d.First(); k != nil; k, v = d.Next() {
-				err := json.Unmarshal(v, &comment)
-				if err != nil {
-					return err
-				}
-				if int(comment.ArticleId) == Id {
-					comments.Contents = append(comments.Contents, comment)
-				}
-			}
-		} else {
-			return errors.New("No Comment")
-		}
-
-		return nil
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Println("ArticleId:", Id)
-	for i := 0; i < len(comments.Contents); i++ {
-		fmt.Println(comments.Contents[i])
-	}
-}
-
 func DBTestComment() {
-	fmt.Println()
-	fmt.Println("DBTestComment")
 	CreateComment()
-	GetComments(1)
 }

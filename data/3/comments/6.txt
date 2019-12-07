@@ -1,0 +1,4 @@
+andeve
+2002.20 09:57
+对于大部分中文英文，distance用top和bottom计算，有偏差，字体被偏下了一点点，应该用ascent和descent计算
+部分国家的特殊字符的上下高度会超过descent，ascent，用top和bottom计算

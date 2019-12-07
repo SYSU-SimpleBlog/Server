@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"strconv"
 
@@ -59,8 +60,32 @@ func CreateTable() {
 			tags = append(tags, sw.Tag{"CS"})
 			tags = append(tags, sw.Tag{"SC"})
 
-			for i := 1; i < 16; i++ {
-				article = sw.Article{int32(i), "title" + strconv.Itoa(i), tags, "2019", "content" + strconv.Itoa(i)}
+			filePath := "./data"
+			files, err := ioutil.ReadDir(filePath)
+			if err != nil {
+				log.Fatal(err)
+			}
+			for i := 1; i <= len(files); i++ {
+				path := filePath + "/" + strconv.Itoa(i)
+				fileInfoList, err := ioutil.ReadDir(path)
+				var articleName string
+				for i := 0; i < len(fileInfoList); i++ {
+					if fileInfoList[i].IsDir() == false {
+						articleName = fileInfoList[i].Name()
+					}
+				}
+				if err != nil {
+					log.Fatal(err)
+				}
+				content, err := ioutil.ReadFile(path + "/" + articleName)
+				if err != nil {
+					fmt.Println("获取失败", err)
+					return err
+				}
+
+				//fmt.Println("文本内容为:", string(content))
+
+				article = sw.Article{int32(i), articleName, tags, "2019", string(content)}
 				v, err := json.Marshal(article)
 				//insert rows
 				err = b.Put(itob(i), v)
@@ -106,7 +131,7 @@ func GetArticleById(id int) {
 			return errors.New("Article Not Exists")
 		}
 	})
-	fmt.Println(article.Content)
+	//fmt.Println(article.Content)
 }
 
 func GetArticles(p int) {

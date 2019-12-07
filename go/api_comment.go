@@ -17,6 +17,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -202,6 +203,9 @@ func GetCommentsOfArticle(w http.ResponseWriter, r *http.Request) {
 
 	contentsCount := len(comments.Contents)
 	comments.PageCount = contentsCount
+
+	sort.Sort(UserSlice(comments.Contents))
+
 	if contentsCount <= (index-1)*5 {
 		err := errors.New("Page is out of index")
 		response := ErrorResponse{err.Error()}
@@ -218,4 +222,16 @@ func GetCommentsOfArticle(w http.ResponseWriter, r *http.Request) {
 
 	comments.Contents = comments.Contents[(index-1)*5 : end]
 	JsonResponse(comments, w, http.StatusOK)
+}
+
+type UserSlice []Comment
+
+func (s UserSlice) Len() int {
+	return len(s)
+}
+func (s UserSlice) Swap(i, j int) {
+	s[i], s[j] = s[j], s[i]
+}
+func (s UserSlice) Less(i, j int) bool {
+	return s[i].Date > s[j].Date
 }
