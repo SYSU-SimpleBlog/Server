@@ -11,7 +11,9 @@
 package t
 
 import (
+	"fmt"
 	"log"
+	"strconv"
 
 	// WARNING!
 	// Change this to a fully-qualified import path
@@ -35,18 +37,19 @@ func CreateUser() {
 		b := tx.Bucket([]byte("User"))
 		if b == nil {
 			//create table "xx" if not exits
-			_, err := tx.CreateBucket([]byte("User")) 
+			b, err = tx.CreateBucket([]byte("User"))
 			if err != nil {
 				log.Fatal(err)
 			}
 		}
 
 		//insert rows
-		err := b.Put([]byte("mahuan"), []byte("123"))
-		err = b.Put([]byte("mahh"), []byte("1212"))
-
-		if err != nil {
-			log.Fatal(err)
+		for i := 0; i < 10; i++ {
+			err := b.Put([]byte("user"+strconv.Itoa(i)), []byte("pass"+strconv.Itoa(i)))
+			if err != nil {
+				log.Fatal(err)
+			}
+			fmt.Println("user"+strconv.Itoa(i), "pass"+strconv.Itoa(i))
 		}
 
 		return nil

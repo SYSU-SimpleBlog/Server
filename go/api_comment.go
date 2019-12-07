@@ -13,11 +13,13 @@ package swagger
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
+	"log"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
-	"log"
 
 	"github.com/boltdb/bolt"
 	"github.com/dgrijalva/jwt-go"
@@ -25,14 +27,19 @@ import (
 )
 
 func CreateComment(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("CreateComment")
 	db, err := bolt.Open("my.db", 0600, nil)
-	log.Fatal(err)
+	if err != nil {
+		log.Fatal(err)
+	}
 	defer db.Close()
 
 	articleId := strings.Split(r.URL.Path, "/")[4]
+	fmt.Println("ArticleIdstring:", articleId)
 
 	Id, err := strconv.Atoi(articleId)
 	if err != nil {
+		fmt.Println("Get Id failed")
 		response := InlineResponse404{err.Error()}
 		JsonResponse(response, w, http.StatusBadRequest)
 		return
@@ -46,7 +53,7 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 			if v == nil {
 				return errors.New("Article Not Exists")
 			} else {
-				_=json.Unmarshal(v,&article)
+				_ = json.Unmarshal(v, &article)
 				return nil
 			}
 		}
@@ -54,13 +61,15 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 	})
 
 	if err != nil {
+		fmt.Println("Article Not Exists")
 		response := InlineResponse404{err.Error()}
 		JsonResponse(response, w, http.StatusBadRequest)
 		return
 	}
+	fmt.Println("articleid:", article.Id)
 
-	comment := &Comment{
-		Date:      time.Now().Format("2019-11-02 13:21:05"),
+	comment := Comment{
+		Date:      time.Now().Format("2006-01-02 15:04:05"),
 		Content:   "",
 		Author:    "",
 		ArticleId: int32(Id),
@@ -77,17 +86,19 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 			JsonResponse(response, w, http.StatusBadRequest)
 		}
 		return
+	} else {
+		fmt.Println("comment:", comment)
 	}
-
-	
+	//fmt.Println(request.GetHeader("Authorization"))
 	token, err := request.ParseFromRequest(r, request.AuthorizationHeaderExtractor,
 		func(token *jwt.Token) (interface{}, error) {
+			fmt.Println(token)
 			return []byte(comment.Author), nil
 		})
-	
+	fmt.Println(token)
+
 	if err == nil {
 		if token.Valid {
-
 			err = db.Update(func(tx *bolt.Tx) error {
 				b, err := tx.CreateBucketIfNotExists([]byte("Comment"))
 				if err != nil {
@@ -95,7 +106,9 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 				}
 				id, _ := b.NextSequence()
 				encoded, err := json.Marshal(comment)
-				return b.Put(itob(int(id)), encoded)
+				var str string
+				str = strconv.Itoa(Id) + "_" + strconv.Itoa(int(id))
+				return b.Put([]byte(str), encoded)
 			})
 			if err != nil {
 				response := InlineResponse404{err.Error()}
@@ -114,7 +127,7 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 
 }
 
-
+//  http://localhost:8080/user/article/1/comments?page=1
 func GetCommentsOfArticle(w http.ResponseWriter, r *http.Request) {
 	db, err := bolt.Open("my.db", 0600, nil)
 	fatal(err)
@@ -128,6 +141,15 @@ func GetCommentsOfArticle(w http.ResponseWriter, r *http.Request) {
 		JsonResponse(reponse, w, http.StatusNotFound)
 		return
 	}
+
+	u, err := url.Parse(r.URL.String())
+	if err != nil {
+		log.Fatal(err)
+	}
+	m, _ := url.ParseQuery(u.RawQuery)
+	page := m["page"][0]
+	index, err := strconv.Atoi(page)
+
 	var article []byte
 	err = db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("Article"))
@@ -145,8 +167,8 @@ func GetCommentsOfArticle(w http.ResponseWriter, r *http.Request) {
 	})
 
 	if err != nil {
-		reponse := InlineResponse404{err.Error()}
-		JsonResponse(reponse, w, http.StatusNotFound)
+		response := InlineResponse404{err.Error()}
+		JsonResponse(response, w, http.StatusNotFound)
 		return
 	}
 	var comments Comments
@@ -178,5 +200,23 @@ func GetCommentsOfArticle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	contentsCount := len(comments.Contents)
+	comments.pageCount = contentsCount/5 + contentsCount%5
+	fmt.Println(comments.pageCount)
+	if contentsCount <= (index-1)*5 {
+		err := errors.New("Page is out of index")
+		response := ErrorResponse{err.Error()}
+		JsonResponse(response, w, http.StatusNotFound)
+		return
+	}
+
+	var end int
+	if index*5 < contentsCount {
+		end = index * 5
+	} else {
+		end = contentsCount
+	}
+
+	comments.Contents = comments.Contents[(index-1)*5 : end]
 	JsonResponse(comments, w, http.StatusOK)
 }

@@ -65,7 +65,7 @@ func DeleteArticleById(w http.ResponseWriter, r *http.Request) {
 		JsonResponse(response, w, http.StatusNotFound)
 		return
 	}
-	JsonResponse("", w, http.StatusNotFound)
+	JsonResponse("", w, http.StatusOK)
 }
 
 func GetArticleById(w http.ResponseWriter, r *http.Request) {

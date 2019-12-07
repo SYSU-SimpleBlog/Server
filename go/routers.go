@@ -78,7 +78,7 @@ var routes = Routes{
 	Route{
 		"CreateComment",
 		strings.ToUpper("Post"),
-		"/simpleblog/user/article/{id}/comments",
+		"/simpleblog/user/article/{id}/comment",
 		CreateComment,
 	},
 

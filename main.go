@@ -17,15 +17,16 @@ import (
 	// WARNING!
 	// Change this to a fully-qualified import path
 	// once you place this file into your project.
-	// For example,
-	//
-	//    sw "github.com/myname/myrepo/go"
-	//
-	sw "./go"
+	sw "github.com/homework/Server/go"
+
+	t "github.com/homework/Server/t"
 )
 
 func main() {
 	log.Printf("Server started")
+	t.CreateUser()
+	t.DBTestArticle()
+	t.DBTestComment()
 
 	router := sw.NewRouter()
 

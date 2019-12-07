@@ -12,6 +12,7 @@ package swagger
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"net/url"
 	"time"
@@ -124,9 +125,11 @@ func SignIn(w http.ResponseWriter, r *http.Request) {
 	u, err := url.Parse(r.URL.String())
 	fatal(err)
 	m, _ := url.ParseQuery(u.RawQuery)
+	fmt.Println(m)
 	var user User
 	user.Username = m["username"][0]
 	user.Password = m["password"][0]
+	fmt.Println(user.Username, user.Password)
 
 	err = db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("User"))
