@@ -48,21 +48,28 @@ func CreateTable() {
 		b := tx.Bucket([]byte("Article"))
 		if b == nil {
 			//create table "xx" if not exits
-			b, err := tx.CreateBucket([]byte("Article"))
-			var article sw.Article
-			if b != nil {
-				for i := 1; i < 16; i++ {
-					article = sw.Article{int32(i), "title" + strconv.Itoa(i), nil, "2019", "content" + strconv.Itoa(i)}
-					v, err := json.Marshal(article)
-					//insert rows
-					err = b.Put(itob(i), v)
-					if err != nil {
-						log.Fatal(err)
-					}
-				}
-			} else {
+			b, err = tx.CreateBucket([]byte("Article"))
+			if err != nil {
 				log.Fatal(err)
 			}
+		}
+		if b != nil {
+			var article sw.Article
+			var tags []sw.Tag
+			tags = append(tags, sw.Tag{"CS"})
+			tags = append(tags, sw.Tag{"SC"})
+
+			for i := 1; i < 16; i++ {
+				article = sw.Article{int32(i), "title" + strconv.Itoa(i), tags, "2019", "content" + strconv.Itoa(i)}
+				v, err := json.Marshal(article)
+				//insert rows
+				err = b.Put(itob(i), v)
+				if err != nil {
+					log.Fatal(err)
+				}
+			}
+		} else {
+			return errors.New("Table Article doesn't exist")
 		}
 
 		return nil
@@ -184,13 +191,15 @@ func DeleteArticleById(id int) {
 	fmt.Println("Successfully Delete article ", id)
 }
 
-func BuildDB() {
+func DBTestArticle() {
+	fmt.Println()
+	fmt.Println("DBTestArticle")
 	CreateTable()
 	GetArticleById(1)
 	GetArticleById(5)
-	GetArticles(1)/*
-	DeleteArticleById(5)
-	GetArticleById(5)
-*/
+	GetArticles(1) /*
+		DeleteArticleById(5)
+		GetArticleById(5)
+	*/
 	CreateUser()
 }

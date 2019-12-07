@@ -160,6 +160,7 @@ paths:
       operationId: "SignIn"
       produces:
       - "application/json"
+<<<<<<< HEAD
       parameters:
       - in: "body"
         name: "body"
@@ -167,6 +168,8 @@ paths:
         schema:
           $ref: "#/definitions/User"
         x-exportParamName: "StructString"
+=======
+>>>>>>> a828c91a29df19905bf2fae2997dac7e68d31222
       responses:
         "200":
           description: "Successful Operation"

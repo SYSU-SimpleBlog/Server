@@ -13,11 +13,12 @@ package swagger
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
-	"log"
 
 	"github.com/boltdb/bolt"
 	"github.com/dgrijalva/jwt-go"
@@ -25,14 +26,19 @@ import (
 )
 
 func CreateComment(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("CreateComment")
 	db, err := bolt.Open("my.db", 0600, nil)
-	log.Fatal(err)
+	if err != nil {
+		log.Fatal(err)
+	}
 	defer db.Close()
 
 	articleId := strings.Split(r.URL.Path, "/")[4]
+	fmt.Println("ArticleIdstring:", articleId)
 
 	Id, err := strconv.Atoi(articleId)
 	if err != nil {
+		fmt.Println("Get Id failed")
 		response := InlineResponse404{err.Error()}
 		JsonResponse(response, w, http.StatusBadRequest)
 		return
@@ -46,7 +52,7 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 			if v == nil {
 				return errors.New("Article Not Exists")
 			} else {
-				_=json.Unmarshal(v,&article)
+				_ = json.Unmarshal(v, &article)
 				return nil
 			}
 		}
@@ -54,13 +60,15 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 	})
 
 	if err != nil {
+		fmt.Println("Article Not Exists")
 		response := InlineResponse404{err.Error()}
 		JsonResponse(response, w, http.StatusBadRequest)
 		return
 	}
+	fmt.Println("articleid:", article.Id)
 
-	comment := &Comment{
-		Date:      time.Now().Format("2019-11-02 13:21:05"),
+	comment := Comment{
+		Date:      time.Now().Format("2006-01-02 15:04:05"),
 		Content:   "",
 		Author:    "",
 		ArticleId: int32(Id),
@@ -77,17 +85,19 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 			JsonResponse(response, w, http.StatusBadRequest)
 		}
 		return
+	} else {
+		fmt.Println("comment:", comment)
 	}
-
-	
+	//fmt.Println(request.GetHeader("Authorization"))
 	token, err := request.ParseFromRequest(r, request.AuthorizationHeaderExtractor,
 		func(token *jwt.Token) (interface{}, error) {
+			fmt.Println(token)
 			return []byte(comment.Author), nil
 		})
-	
+	fmt.Println(token)
+
 	if err == nil {
 		if token.Valid {
-
 			err = db.Update(func(tx *bolt.Tx) error {
 				b, err := tx.CreateBucketIfNotExists([]byte("Comment"))
 				if err != nil {
@@ -113,7 +123,6 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
-
 
 func GetCommentsOfArticle(w http.ResponseWriter, r *http.Request) {
 	db, err := bolt.Open("my.db", 0600, nil)

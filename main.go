@@ -22,12 +22,15 @@ import (
 	//    sw "github.com/myname/myrepo/go"
 	//
 	sw "./go"
-	test "./t"
+	t "./t"
 )
 
 func main() {
-	test.BuildDB()
+	t.DBTestArticle()
 	log.Printf("Server started")
+	t.CreateUser()
+	t.DBTestArticle()
+	t.DBTestComment()
 
 	router := sw.NewRouter()
 
