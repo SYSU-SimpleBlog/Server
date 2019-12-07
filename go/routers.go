@@ -46,12 +46,27 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hello World!")
 }
 
+func Options(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "X-Requested-With,Content-Type,Authorization")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(204)
+}
+
 var routes = Routes{
 	Route{
 		"Index",
 		"GET",
 		"/simpleblog/",
 		Index,
+	},
+
+	Route{
+		"OPTIONS",
+		strings.ToUpper("options"),
+		"/simpleblog/user/article/{id}/comment",
+		Options,
 	},
 
 	Route{
