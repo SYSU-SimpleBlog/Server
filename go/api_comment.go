@@ -16,6 +16,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -105,7 +106,9 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 				}
 				id, _ := b.NextSequence()
 				encoded, err := json.Marshal(comment)
-				return b.Put(itob(int(id)), encoded)
+				var str string
+				str = strconv.Itoa(Id) + "_" + strconv.Itoa(int(id))
+				return b.Put([]byte(str), encoded)
 			})
 			if err != nil {
 				response := InlineResponse404{err.Error()}
@@ -124,6 +127,7 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 
 }
 
+//  http://localhost:8080/user/article/1/comments?page=1
 func GetCommentsOfArticle(w http.ResponseWriter, r *http.Request) {
 	db, err := bolt.Open("my.db", 0600, nil)
 	fatal(err)
@@ -137,6 +141,15 @@ func GetCommentsOfArticle(w http.ResponseWriter, r *http.Request) {
 		JsonResponse(reponse, w, http.StatusNotFound)
 		return
 	}
+
+	u, err := url.Parse(r.URL.String())
+	if err != nil {
+		log.Fatal(err)
+	}
+	m, _ := url.ParseQuery(u.RawQuery)
+	page := m["page"][0]
+	index, err := strconv.Atoi(page)
+
 	var article []byte
 	err = db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("Article"))
@@ -154,8 +167,8 @@ func GetCommentsOfArticle(w http.ResponseWriter, r *http.Request) {
 	})
 
 	if err != nil {
-		reponse := InlineResponse404{err.Error()}
-		JsonResponse(reponse, w, http.StatusNotFound)
+		response := InlineResponse404{err.Error()}
+		JsonResponse(response, w, http.StatusNotFound)
 		return
 	}
 	var comments Comments
@@ -187,5 +200,23 @@ func GetCommentsOfArticle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	contentsCount := len(comments.Contents)
+	comments.pageCount = contentsCount/5 + contentsCount%5
+	fmt.Println(comments.pageCount)
+	if contentsCount <= (index-1)*5 {
+		err := errors.New("Page is out of index")
+		response := ErrorResponse{err.Error()}
+		JsonResponse(response, w, http.StatusNotFound)
+		return
+	}
+
+	var end int
+	if index*5 < contentsCount {
+		end = index * 5
+	} else {
+		end = contentsCount
+	}
+
+	comments.Contents = comments.Contents[(index-1)*5 : end]
 	JsonResponse(comments, w, http.StatusOK)
 }

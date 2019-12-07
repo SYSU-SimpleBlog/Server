@@ -11,6 +11,7 @@
 package swagger
 
 type Comments struct {
+	pageCount int
 
 	Contents []Comment `json:"contents,omitempty"`
 }
