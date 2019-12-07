@@ -797,13 +797,9 @@ Paste_Image.png
 
 Android5.0 之后，如老罗所说，有两种情况，
 
-
-
 ![img](https:////upload-images.jianshu.io/upload_images/20166-96ced1dd07d5e833.png?imageMogr2/auto-orient/strip|imageView2/2/w/974/format/webp)
 
 Main Thread 和 Render Thread
-
-
 
 ![img](https:////upload-images.jianshu.io/upload_images/20166-6b2b295b9c851f34.png?imageMogr2/auto-orient/strip|imageView2/2/w/987/format/webp)
 
