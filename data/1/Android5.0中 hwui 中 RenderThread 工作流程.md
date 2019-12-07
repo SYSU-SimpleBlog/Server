@@ -365,8 +365,7 @@ void DrawFrameTask::run() {
 所以查看代码就可以知道有两个 RenderNode，一个在 hwui 中，一个在 View 中。简单来说，同步信息就是将 Java 层的 RenderNode 中的信息同步到 hwui 中的 RenderNode 中。 注意syncFrameState的返回值赋给了 canUnblockUiThread ，从名字可以看出这个 canUnblockUiThread 的作用是判断是否唤醒 Main Thread ，也就是说如果返回为 true 的话，会提前唤醒主线程来执行其他的事情，而不用等到 draw 完成后再去唤醒 Main Thread。 这也是 Android 5.0 和 Android 4.x 最大的区别了。
 
 
-
-![img](https:////upload-images.jianshu.io/upload_images/20166-22aef1af1fcd1745.png?imageMogr2/auto-orient/strip|imageView2/2/w/478/format/webp)
+![img](https://upload-images.jianshu.io/upload_images/20166-22aef1af1fcd1745.png?imageMogr2/auto-orient/strip|imageView2/2/w/478/format/webp)
 
 syncFrameState
 
@@ -555,9 +554,7 @@ void RenderNode::prepareTreeImpl(TreeInfo& info) {
 
 ## 2. draw
 
-
-
-![img](https:////upload-images.jianshu.io/upload_images/20166-9748a10652e3ee28.png?imageMogr2/auto-orient/strip|imageView2/2/w/540/format/webp)
+![img](https://upload-images.jianshu.io/upload_images/20166-9748a10652e3ee28.png?imageMogr2/auto-orient/strip|imageView2/2/w/540/format/webp)
 
 Draw
 
