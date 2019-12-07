@@ -201,7 +201,7 @@ func GetCommentsOfArticle(w http.ResponseWriter, r *http.Request) {
 	}
 
 	contentsCount := len(comments.Contents)
-	comments.PageCount = contentsCount/5 + contentsCount%5
+	comments.PageCount = contentsCount
 	if contentsCount <= (index-1)*5 {
 		err := errors.New("Page is out of index")
 		response := ErrorResponse{err.Error()}
